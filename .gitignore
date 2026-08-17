@@ -1,0 +1,15 @@
+build/
+CMakeFiles/
+CMakeCache.txt
+*.gpkg
+*.gpkg-wal
+*.gpkg-shm
+*.tif
+*.tiff
+*.o
+*.a
+*.so
+GisDynamicClient
+GisDynamicClient_autogen/
+Makefile
+cmake_install.cmake

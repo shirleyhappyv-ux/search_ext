@@ -13,9 +13,6 @@
 #include <qgsmapcanvas.h>
 #include <qgsvectorlayer.h>
 #include <qgsproject.h>
-#include <qgsrubberband.h>
-#include <qgsmaptoolemitpoint.h>
-#include <qgsrectangle.h>
 
 class GDALDataset;
 
@@ -35,13 +32,10 @@ public:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
-    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void zoomInMap();
     void zoomOutMap();
-    void activatePanTool();
-    void activateSelectTool();
     void executeTextSearch();
     void executeTunnelSiteSelection();
     void handleTableDoubleClicked(int row, int column);
@@ -50,25 +44,19 @@ private slots:
 private:
     void setupUi();
     void initGisLayers();
-    void initSelectionTool();
     bool sampleRealDemData(double lon, double lat, double &elevation, double &slope, double &roughness);
+    double CalculateMetricScore(double value, double opt_min, double opt_max,
+                                double avail_min1, double avail_max1,
+                                double avail_min2, double avail_max2,
+                                double veto_min, double veto_max, 
+                                bool has_veto_min, bool has_veto_max);
 
     QgsMapCanvas* mCanvas = nullptr;
-    QgsMapTool* mPanTool = nullptr;
-    QgsMapToolEmitPoint* mSelectTool = nullptr;
-    QgsRubberBand* mRubberBand = nullptr;
-
     QgsVectorLayer* mMarkLayer = nullptr;
     QgsVectorLayer* mRoadsLayer = nullptr;
     QgsVectorLayer* mPlacesLayer = nullptr;
     QgsVectorLayer* mPoisLayer = nullptr;
     GDALDataset* mDemDataset = nullptr;
-
-    // 空间选框状态
-    QgsRectangle mSelectedExtent;
-    bool mHasSpatialFilter = false;
-    QPoint mStartPoint;
-    bool mIsSelecting = false;
 
     QLineEdit* leTextSearch = nullptr;
     QPushButton* btnSmartSearch = nullptr;
@@ -87,23 +75,14 @@ private:
 
     QTableWidget* tableWidgetConfirm = nullptr;
     QLabel* lblStatus = nullptr;
-    QLabel* lblFilterStatus = nullptr;
     QList<GisSearchTarget> mCurrentResults;
 
+    // 🌟 分页组件
     int mCurrentPage = 1;
     const int mPageSize = 6;
     QPushButton* btnPrevPage = nullptr;
     QPushButton* btnNextPage = nullptr;
     QLabel* lblPageInfo = nullptr;
-
-    QLabel* mPoiPopupLabel = nullptr; // 🌟 浮动气泡卡片
-    void handleCanvasClick(const QPoint& pos);
-
-    QPushButton* btnZoomIn = nullptr;
-    QPushButton* btnZoomOut = nullptr;
-    QPushButton* btnPan = nullptr;
-    QPushButton* btnSelectArea = nullptr;
-    QPushButton* btnClearSpatial = nullptr;
 };
 
 #endif // MAINWINDOW_H
